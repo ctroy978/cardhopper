@@ -6,28 +6,28 @@ const DIVIDER: usize = 13; //number for math tricks to assign suit and rank
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Suit {
-    heart,
-    diamond,
-    club,
-    spade,
+    Heart,
+    Diamond,
+    Club,
+    Spade,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Rank {
-    two,
-    three,
-    four,
-    five,
-    six,
-    seven,
-    eight,
-    nine,
-    ten,
-    jack,
-    queen,
-    king,
-    ace,
-    joker,
+    Two,
+    Three,
+    Four,
+    Five,
+    Six,
+    Seven,
+    Eight,
+    Nine,
+    Ten,
+    Jack,
+    Queen,
+    King,
+    Ace,
+    Joker,
 }
 
 ///card can have a value between 0-51.
@@ -50,26 +50,26 @@ impl Card {
         Self { value }
     }
     pub fn get_suit(&self) -> Suit {
-        let suits = [Suit::club, Suit::diamond, Suit::heart, Suit::spade];
+        let suits = [Suit::Club, Suit::Diamond, Suit::Heart, Suit::Spade];
         let pick = self.value / DIVIDER;
         suits[pick]
     }
     pub fn get_rank(&self) -> Rank {
         let rank = match self.value % DIVIDER {
-            0 => Rank::two,
-            1 => Rank::three,
-            2 => Rank::four,
-            3 => Rank::five,
-            4 => Rank::six,
-            5 => Rank::seven,
-            6 => Rank::eight,
-            7 => Rank::nine,
-            8 => Rank::ten,
-            9 => Rank::jack,
-            10 => Rank::queen,
-            11 => Rank::king,
-            12 => Rank::ace,
-            _ => Rank::joker,
+            0 => Rank::Two,
+            1 => Rank::Three,
+            2 => Rank::Four,
+            3 => Rank::Five,
+            4 => Rank::Six,
+            5 => Rank::Seven,
+            6 => Rank::Eight,
+            7 => Rank::Nine,
+            8 => Rank::Ten,
+            9 => Rank::Jack,
+            10 => Rank::Queen,
+            11 => Rank::King,
+            12 => Rank::Ace,
+            _ => Rank::Joker,
         };
         rank
     }
@@ -155,9 +155,9 @@ mod test {
     use super::*;
 
     #[test]
-    fn card_suit() {
+    fn correct_card_suit() {
         let card1 = Card::new(5);
-        assert_eq!(Suit::club, card1.get_suit());
+        assert_eq!(Suit::Club, card1.get_suit());
     }
     #[test]
     fn card_suit_eq() {
@@ -166,9 +166,9 @@ mod test {
         assert_eq!(card2.get_suit(), card1.get_suit());
     }
     #[test]
-    fn card_rank() {
+    fn correct_card_rank() {
         let card1 = Card::new(5);
-        assert_eq!(Rank::seven, card1.get_rank());
+        assert_eq!(Rank::Seven, card1.get_rank());
     }
     #[test]
     fn hand_sorted() {
