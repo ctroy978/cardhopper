@@ -31,13 +31,17 @@ pub enum Rank {
 }
 
 ///card can have a value between 0-51.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Card {
     value: usize,
 }
 
 pub struct Deck {
     deck: HashMap<usize, Card>,
+}
+
+pub struct Hand {
+    hand: Vec<Card>,
 }
 
 impl Card {
@@ -69,20 +73,22 @@ impl Card {
         };
         rank
     }
-    ///get rank as number to compare greater than or less than
+    ///get rank as usize to compare greater than or less than
     pub fn get_rank_usize(&self) -> usize {
         (self.value % 13) + 2
     }
-    ///get suit as number to compare greater than or less than
+    ///get suit as usize to compare greater than or less than
     /// will come out alphabetical club-0, diamond-1, heart-2, spade-3
     pub fn get_suit_usize(&self) -> usize {
         self.value / 13
     }
 }
+
 impl fmt::Display for Card {
+    ///printable card
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_fmt(format_args!(
-            "-{:?} of {:?}s",
+            "{:?} of {:?}s",
             self.get_rank(),
             self.get_suit()
         ))
@@ -115,5 +121,72 @@ impl Deck {
             Some(key) => return Some(*key),
             None => return None,
         }
+    }
+}
+
+impl Hand {
+    ///create a new hand for a player
+    pub fn new() -> Self {
+        let hand = Vec::new();
+        Self { hand }
+    }
+    ///deal one card to player hand
+    pub fn deal_card(&mut self, card: Card) {
+        self.hand.push(card);
+    }
+    ///sort cards in hand
+    pub fn sort_hand(&mut self) {
+        self.hand.sort();
+    }
+}
+impl fmt::Display for Hand {
+    ///printable hand
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        let mut hand_to_string: String = String::new();
+        for card in self.hand.iter() {
+            hand_to_string.push_str(format!("{}\n", card).as_str());
+        }
+        formatter.write_fmt(format_args!("{}", hand_to_string))
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn card_suit() {
+        let card1 = Card::new(5);
+        assert_eq!(Suit::club, card1.get_suit());
+    }
+    #[test]
+    fn card_suit_eq() {
+        let card1 = Card::new(5);
+        let card2 = Card::new(4);
+        assert_eq!(card2.get_suit(), card1.get_suit());
+    }
+    #[test]
+    fn card_rank() {
+        let card1 = Card::new(5);
+        assert_eq!(Rank::seven, card1.get_rank());
+    }
+    #[test]
+    fn hand_sorted() {
+        let mut player = Hand::new();
+        let cards: Vec<usize> = vec![5, 22, 4, 33, 48];
+        for c in cards.iter() {
+            player.deal_card(Card::new(*c));
+        }
+        player.sort_hand();
+        assert_eq!(
+            player.hand,
+            vec![
+                Card::new(4),
+                Card::new(5),
+                Card::new(22),
+                Card::new(33),
+                Card::new(48),
+            ]
+        );
     }
 }

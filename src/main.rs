@@ -15,4 +15,12 @@ fn main() {
     println!("{}", card1.get_rank_usize());
     println!("{}", card1.get_suit_usize());
     println!("{}", r);
+
+    let mut player = Hand::new();
+    let cards: Vec<usize> = vec![5, 22, 4, 33, 48];
+    for c in cards.iter() {
+        player.deal_card(Card::new(*c));
+    }
+    player.sort_hand();
+    println!("{}", player);
 }
