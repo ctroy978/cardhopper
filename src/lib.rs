@@ -45,7 +45,8 @@ pub struct Hand {
 }
 
 impl Card {
-    ///value must be between 0-51
+    /// value must be between 0-51
+    /// always assums a 52 deck of cards.
     pub fn new(value: usize) -> Self {
         Self { value }
     }
@@ -137,6 +138,16 @@ impl Hand {
     ///sort cards in hand
     pub fn sort_hand(&mut self) {
         self.hand.sort();
+    }
+    ///returns number of pairs in a hand by rank.
+    /// first two spots in array are 0 and 1 and
+    /// won't get filled. filled array is 2 - ace(15);
+    pub fn find_matches(&self) -> Vec<usize> {
+        let mut matches = vec![0; 15];
+        for card in self.hand.iter() {
+            matches[card.get_rank_usize()] += 1;
+        }
+        matches
     }
 }
 impl fmt::Display for Hand {
