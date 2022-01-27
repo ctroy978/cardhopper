@@ -139,6 +139,17 @@ impl Hand {
     pub fn sort_by_suit(&mut self) {
         self.hand.sort();
     }
+    ///return value of high card in hand
+    pub fn hi_card(&self) -> usize {
+        let mut hi_card: usize = 0;
+        for card in self.hand.iter() {
+            if card.get_rank_usize() > hi_card {
+                hi_card = card.get_rank_usize();
+            }
+        }
+        hi_card
+    }
+
     ///returns number of pairs in a hand by rank.
     /// first two spots in array are 0 and 1 and
     /// won't get filled. filled array is 2 - ace(15);
