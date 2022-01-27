@@ -76,7 +76,7 @@ impl Card {
     }
     ///get rank as usize to compare greater than or less than
     pub fn get_rank_usize(&self) -> usize {
-        (self.value % 13) + 2
+        (self.value % 13) + 2 //two is added because cards start at 2 and computers start at 0.
     }
     ///get suit as usize to compare greater than or less than
     /// will come out alphabetical club-0, diamond-1, heart-2, spade-3
@@ -139,7 +139,7 @@ impl Hand {
     pub fn sort_by_suit(&mut self) {
         self.hand.sort();
     }
-    ///return value of high card in hand
+    ///return usize value of high card in hand
     pub fn hi_card(&self) -> usize {
         let mut hi_card: usize = 0;
         for card in self.hand.iter() {

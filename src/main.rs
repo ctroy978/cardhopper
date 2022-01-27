@@ -13,4 +13,6 @@ fn main() {
     println!("num of pairs: {:?}, is_strait: {}, is flush: {}", x, y, z);
     let xyz = player.is_royal_flush();
     println!("{}", xyz);
+    let h = player.hi_card();
+    println!("hi: {}", h);
 }
