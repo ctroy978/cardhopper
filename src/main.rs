@@ -2,12 +2,12 @@ use cardlib::*;
 
 fn main() {
     let mut player = Hand::new();
-    let cards: Vec<usize> = vec![6, 19, 33, 46, 12];
+    let cards: Vec<usize> = vec![6, 20, 8, 22, 10];
     for c in cards.iter() {
         player.deal_card(Card::new(*c));
     }
-    player.sort_hand();
     println!("{}", player);
     let x = player.find_matches();
-    println!("num of pairs: {:?}", x);
+    let y = player.find_strait();
+    println!("num of pairs: {:?}, is_strait: {}", x, y);
 }

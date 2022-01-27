@@ -136,7 +136,7 @@ impl Hand {
         self.hand.push(card);
     }
     ///sort cards in hand
-    pub fn sort_hand(&mut self) {
+    pub fn sort_by_suit(&mut self) {
         self.hand.sort();
     }
     ///returns number of pairs in a hand by rank.
@@ -148,6 +148,22 @@ impl Hand {
             matches[card.get_rank_usize()] += 1;
         }
         matches
+    }
+    ///returns true if hand has a strait.
+    pub fn find_strait(&self) -> bool {
+        let mut strait_vec: Vec<usize> = Vec::new();
+        for card in self.hand.iter() {
+            strait_vec.push(card.get_rank_usize());
+        }
+        strait_vec.sort();
+        let mut base = strait_vec[0];
+        for i in strait_vec.iter() {
+            if i != &base {
+                return false;
+            }
+            base += 1;
+        }
+        true
     }
 }
 impl fmt::Display for Hand {
@@ -188,7 +204,7 @@ mod test {
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
         }
-        player.sort_hand();
+        player.sort_by_suit();
         assert_eq!(
             player.hand,
             vec![
@@ -199,5 +215,27 @@ mod test {
                 Card::new(48),
             ]
         );
+    }
+    #[test]
+    fn test_matching() {
+        let mut player = Hand::new();
+        let cards: Vec<usize> = vec![6, 19, 33, 46, 12];
+        for c in cards.iter() {
+            player.deal_card(Card::new(*c));
+        }
+        assert_eq!(
+            player.find_matches(),
+            vec![0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 1]
+        );
+    }
+
+    #[test]
+    fn test_stait_chk() {
+        let mut player = Hand::new();
+        let cards: Vec<usize> = vec![6, 20, 8, 22, 10];
+        for c in cards.iter() {
+            player.deal_card(Card::new(*c));
+        }
+        assert_eq!(player.find_strait(), true);
     }
 }
