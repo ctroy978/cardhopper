@@ -150,7 +150,7 @@ impl Hand {
         matches
     }
     ///returns true if hand has a strait.
-    pub fn find_strait(&self) -> bool {
+    pub fn is_strait(&self) -> bool {
         let mut strait_vec: Vec<usize> = Vec::new();
         for card in self.hand.iter() {
             strait_vec.push(card.get_rank_usize());
@@ -164,6 +164,31 @@ impl Hand {
             base += 1;
         }
         true
+    }
+    ///returns true if hand is flush
+    pub fn is_flush(&self) -> bool {
+        let base = self.hand[0].get_suit();
+        for card in self.hand.iter() {
+            if card.get_suit() != base {
+                return false;
+            }
+        }
+        true
+    }
+    ///returns true if hand is strait flush
+    pub fn is_strait_flush(&self) -> bool {
+        if self.is_flush() && self.is_strait() {
+            return true;
+        }
+        false
+    }
+    ///returns true if hand is royal flush
+    pub fn is_royal_flush(&mut self) -> bool {
+        self.sort_by_suit();
+        if self.is_strait_flush() && self.hand[0].get_rank() == Rank::Ten {
+            return true;
+        }
+        false
     }
 }
 impl fmt::Display for Hand {
@@ -236,6 +261,6 @@ mod test {
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
         }
-        assert_eq!(player.find_strait(), true);
+        assert_eq!(player.is_strait(), true);
     }
 }
