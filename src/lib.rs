@@ -201,6 +201,40 @@ impl Hand {
         }
         false
     }
+    ///returns true if hand has a match equal to
+    /// usize in argument. so if num is 3 and hand has
+    /// three of a kind, return true. Will not detect two pair.
+    pub fn is_match_of_kind(&self, num: usize) -> bool {
+        let matches = self.find_matches();
+        for cards in matches.iter() {
+            if cards == &num {
+                return true;
+            }
+        }
+        false
+    }
+    ///returns true if hand has two pair
+    pub fn is_two_pair(&self) -> bool {
+        let matches = self.find_matches();
+        let mut pair = 0;
+        for a_match in matches {
+            if a_match == 2 {
+                pair += 1;
+            }
+        }
+        if pair == 2 {
+            return true;
+        }
+        false
+    }
+
+    ///returns true if hand is full house
+    pub fn is_full_house(&self) -> bool {
+        if self.is_match_of_kind(3) && self.is_match_of_kind(2) {
+            return true;
+        }
+        false
+    }
 }
 impl fmt::Display for Hand {
     ///printable hand

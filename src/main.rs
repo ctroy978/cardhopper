@@ -2,7 +2,7 @@ use cardlib::*;
 
 fn main() {
     let mut player = Hand::new();
-    let cards: Vec<usize> = vec![8, 9, 10, 11, 12];
+    let cards: Vec<usize> = vec![6, 19, 2, 7, 20];
     for c in cards.iter() {
         player.deal_card(Card::new(*c));
     }
@@ -15,4 +15,10 @@ fn main() {
     println!("{}", xyz);
     let h = player.hi_card();
     println!("hi: {}", h);
+    let three = player.is_match_of_kind(3);
+    println!("three: {}", three);
+    let full = player.is_full_house();
+    println!("full: {}", full);
+    let twopair = player.is_two_pair();
+    println!("two pair: {}", twopair);
 }
