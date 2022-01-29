@@ -1,8 +1,19 @@
 use std::collections::HashMap;
 use std::fmt;
 
+use thiserror::Error;
+
 const FULLDECK: usize = 52;
 const DIVIDER: usize = 13; //number for math tricks to assign suit and rank
+
+#[derive(Debug, Error)]
+#[non_exhaustive]
+pub enum CardError {
+    #[error("Card not available")]
+    CardNotFound,
+    #[error("No card at that location")]
+    BadLocationRequest,
+}
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Suit {
@@ -141,9 +152,12 @@ impl Hand {
         self.hand.sort();
     }
 
-    ///discard a card
-    pub fn discard(&mut self, location: usize) {
-        println!("not finished");
+    ///remove a card from hand
+    pub fn discard(&mut self, location: usize) -> Result<Card, CardError> {
+        if location >= self.hand.len() {
+            return Err(CardError::BadLocationRequest);
+        }
+        Ok(self.hand.remove(location))
     }
 
     ///return usize value of high card in hand
