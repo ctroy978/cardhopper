@@ -96,6 +96,7 @@ impl fmt::Display for Card {
     }
 }
 impl Deck {
+    ///build a new deck of 52 cards
     pub fn new() -> Self {
         let mut deck = HashMap::new();
         for i in 0..FULLDECK {
@@ -139,6 +140,12 @@ impl Hand {
     pub fn sort_by_suit(&mut self) {
         self.hand.sort();
     }
+
+    ///discard a card
+    pub fn discard(&mut self, location: usize) {
+        println!("not finished");
+    }
+
     ///return usize value of high card in hand
     pub fn hi_card(&self) -> usize {
         let mut hi_card: usize = 0;
@@ -297,6 +304,26 @@ mod test {
             player.find_matches(),
             vec![0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 1]
         );
+    }
+
+    #[test]
+    fn test_royal_chk() {
+        let mut player = Hand::new();
+        let cards: Vec<usize> = vec![8, 9, 10, 11, 12];
+        for c in cards.iter() {
+            player.deal_card(Card::new(*c));
+        }
+        assert_eq!(player.is_royal_flush(), true);
+    }
+
+    #[test]
+    fn test_full_house_chk() {
+        let mut player = Hand::new();
+        let cards: Vec<usize> = vec![6, 19, 32, 1, 14];
+        for c in cards.iter() {
+            player.deal_card(Card::new(*c));
+        }
+        assert_eq!(player.is_full_house(), true);
     }
 
     #[test]
