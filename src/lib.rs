@@ -52,6 +52,7 @@ pub struct Deck {
 }
 
 pub struct Hand {
+    name: String,
     hand: Vec<Card>,
 }
 
@@ -139,9 +140,10 @@ impl Deck {
 
 impl Hand {
     ///create a new hand for a player
-    pub fn new() -> Self {
+    pub fn new(name: &str) -> Self {
         let hand = Vec::new();
-        Self { hand }
+        let name = name.to_owned();
+        Self { name, hand }
     }
     ///deal one card to player hand
     pub fn deal_card(&mut self, card: Card) {
@@ -261,6 +263,7 @@ impl fmt::Display for Hand {
     ///printable hand
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         let mut hand_to_string: String = String::new();
+        hand_to_string.push_str(format!("{}\n", self.name).as_str());
         for card in self.hand.iter() {
             hand_to_string.push_str(format!("{}\n", card).as_str());
         }
@@ -290,7 +293,7 @@ mod test {
     }
     #[test]
     fn hand_sorted() {
-        let mut player = Hand::new();
+        let mut player = Hand::new("tester");
         let cards: Vec<usize> = vec![5, 22, 4, 33, 48];
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
@@ -309,7 +312,7 @@ mod test {
     }
     #[test]
     fn test_matching() {
-        let mut player = Hand::new();
+        let mut player = Hand::new("tester");
         let cards: Vec<usize> = vec![6, 19, 33, 46, 12];
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
@@ -322,7 +325,7 @@ mod test {
 
     #[test]
     fn test_royal_chk() {
-        let mut player = Hand::new();
+        let mut player = Hand::new("tester");
         let cards: Vec<usize> = vec![8, 9, 10, 11, 12];
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
@@ -332,7 +335,7 @@ mod test {
 
     #[test]
     fn test_full_house_chk() {
-        let mut player = Hand::new();
+        let mut player = Hand::new("tester");
         let cards: Vec<usize> = vec![6, 19, 32, 1, 14];
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
@@ -342,7 +345,7 @@ mod test {
 
     #[test]
     fn test_stait_chk() {
-        let mut player = Hand::new();
+        let mut player = Hand::new("tester");
         let cards: Vec<usize> = vec![6, 20, 8, 22, 10];
         for c in cards.iter() {
             player.deal_card(Card::new(*c));

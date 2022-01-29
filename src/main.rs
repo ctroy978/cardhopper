@@ -4,10 +4,11 @@ use crate::games::hicard::*;
 use cardlib::*;
 
 fn main() {
-    play_hicard(3);
+    let mut players = vec!["tim", "lin", "corn"];
+    play_hicard(players);
 
     let v = vec![3, 4, 5, 6];
-    let mut player = Hand::new();
+    let mut player = Hand::new("JJ");
     for c in v.iter() {
         player.deal_card(Card::new(*c));
     }

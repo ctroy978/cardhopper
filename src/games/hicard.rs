@@ -1,10 +1,11 @@
 use cardlib::*;
-
-pub fn play_hicard(num_player: usize) {
+///takes a vector of strings representing names
+/// of players.
+pub fn play_hicard(player_names: Vec<&str>) {
     let mut deck = Deck::new();
     let mut players: Vec<Hand> = Vec::new();
-    for _ in 0..num_player {
-        players.push(Hand::new());
+    for player in player_names.iter() {
+        players.push(Hand::new(player));
     }
     for player in players.iter_mut() {
         match deck.get_top_card() {
