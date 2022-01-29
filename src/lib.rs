@@ -145,6 +145,10 @@ impl Hand {
         let name = name.to_owned();
         Self { name, hand }
     }
+    ///return name of hand
+    pub fn get_name(&self) -> String {
+        self.name.clone()
+    }
     ///deal one card to player hand
     pub fn deal_card(&mut self, card: Card) {
         self.hand.push(card);
@@ -227,6 +231,7 @@ impl Hand {
     ///returns true if hand has a match equal to
     /// usize in argument. so if num is 3 and hand has
     /// three of a kind, return true. Will not detect two pair.
+    /// use is_two_pair for that.
     pub fn is_match_of_kind(&self, num: usize) -> bool {
         let matches = self.find_matches();
         for cards in matches.iter() {

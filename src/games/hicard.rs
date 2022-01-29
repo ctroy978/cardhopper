@@ -13,8 +13,16 @@ pub fn play_hicard(player_names: Vec<&str>) {
             None => println!("no card"),
         }
     }
-
+    //determins winner
+    let mut winner = "nobody".to_string();
+    let mut top_card = 0;
     for player in players.iter() {
         println!("{}", player);
+        let score = player.hi_card();
+        if score > top_card {
+            top_card = score;
+            winner = player.get_name();
+        }
     }
+    println!("Winner: {}", winner);
 }
