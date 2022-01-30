@@ -11,8 +11,8 @@ const DIVIDER: usize = 13; //number for math tricks to assign suit and rank
 pub enum CardError {
     #[error("Card not available")]
     CardNotFound,
-    #[error("No card at that location")]
-    BadLocationRequest,
+    #[error("Out of bounds. No card at location")]
+    OutOfBounds,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -161,7 +161,7 @@ impl Hand {
     ///remove a card from hand
     pub fn discard(&mut self, location: usize) -> Result<Card, CardError> {
         if location >= self.hand.len() {
-            return Err(CardError::BadLocationRequest);
+            return Err(CardError::OutOfBounds);
         }
         Ok(self.hand.remove(location))
     }

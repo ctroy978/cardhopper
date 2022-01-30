@@ -1,9 +1,9 @@
 mod games;
 
-use crate::games::hicard::*;
+use crate::games::stud::*;
 use cardlib::*;
 
 fn main() {
     let mut players = vec!["tim", "lin", "corn"];
-    play_hicard(players);
+    play_stud(players);
 }

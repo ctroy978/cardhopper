@@ -1,7 +1,7 @@
 use cardlib::*;
 ///takes a vector of strings representing names
 /// of players.
-pub fn play_hicard(player_names: Vec<&str>) {
+pub fn play_hicard(player_names: Vec<&str>) -> String {
     let mut deck = Deck::new();
     let mut players: Vec<Hand> = Vec::new();
     for player in player_names.iter() {
@@ -24,5 +24,5 @@ pub fn play_hicard(player_names: Vec<&str>) {
             winner = player.get_name();
         }
     }
-    println!("Winner: {}", winner);
+    winner
 }
