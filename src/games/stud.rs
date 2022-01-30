@@ -16,7 +16,8 @@ pub fn play_stud(player_names: Vec<&str>) {
             }
         }
     }
-    for player in players.iter() {
-        println!("{}", player);
+    for player in players.iter_mut() {
+        println!("{}", &player);
+        println!("{:?}", player.find_poker_hand());
     }
 }

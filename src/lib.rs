@@ -13,6 +13,8 @@ pub enum CardError {
     CardNotFound,
     #[error("Out of bounds. No card at location")]
     OutOfBounds,
+    #[error("Not a five card poker hand")]
+    NotFullHand,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -23,7 +25,7 @@ pub enum Suit {
     Spade,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
 pub enum Rank {
     Two,
     Three,
@@ -39,6 +41,20 @@ pub enum Rank {
     King,
     Ace,
     Joker,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+pub enum PokerHand {
+    HighCard,
+    OnePair,
+    TwoPair,
+    ThreeKind,
+    Straight,
+    Flush,
+    FullHouse,
+    FourKind,
+    StraightFlush,
+    RoyalFlush,
 }
 
 ///card can have a value between 0-51.
@@ -188,7 +204,7 @@ impl Hand {
         matches
     }
     ///returns true if hand has a strait.
-    pub fn is_strait(&self) -> bool {
+    pub fn is_straight(&self) -> bool {
         let mut strait_vec: Vec<usize> = Vec::new();
         for card in self.hand.iter() {
             strait_vec.push(card.get_rank_usize());
@@ -214,8 +230,8 @@ impl Hand {
         true
     }
     ///returns true if hand is strait flush
-    pub fn is_strait_flush(&self) -> bool {
-        if self.is_flush() && self.is_strait() {
+    pub fn is_straight_flush(&self) -> bool {
+        if self.is_flush() && self.is_straight() {
             return true;
         }
         false
@@ -223,7 +239,7 @@ impl Hand {
     ///returns true if hand is royal flush
     pub fn is_royal_flush(&mut self) -> bool {
         self.sort_by_suit();
-        if self.is_strait_flush() && self.hand[0].get_rank() == Rank::Ten {
+        if self.is_straight_flush() && self.hand[0].get_rank() == Rank::Ten {
             return true;
         }
         false
@@ -262,6 +278,34 @@ impl Hand {
             return true;
         }
         false
+    }
+    ///returns best five card hand
+    /// must have only five cards
+    pub fn find_poker_hand(&mut self) -> Result<PokerHand, CardError> {
+        if self.hand.len() != 5 {
+            return Err(CardError::NotFullHand);
+        }
+        if self.is_match_of_kind(4) {
+            return Ok(PokerHand::FourKind);
+        } else if self.is_full_house() {
+            return Ok(PokerHand::FullHouse);
+        } else if self.is_match_of_kind(3) {
+            return Ok(PokerHand::ThreeKind);
+        } else if self.is_two_pair() {
+            return Ok(PokerHand::TwoPair);
+        } else if self.is_match_of_kind(2) {
+            return Ok(PokerHand::OnePair);
+        } else if self.is_royal_flush() {
+            return Ok(PokerHand::RoyalFlush);
+        } else if self.is_straight_flush() {
+            return Ok(PokerHand::StraightFlush);
+        } else if self.is_flush() {
+            return Ok(PokerHand::Flush);
+        } else if self.is_straight() {
+            return Ok(PokerHand::Straight);
+        }
+
+        Ok(PokerHand::HighCard)
     }
 }
 impl fmt::Display for Hand {
@@ -355,6 +399,6 @@ mod test {
         for c in cards.iter() {
             player.deal_card(Card::new(*c));
         }
-        assert_eq!(player.is_strait(), true);
+        assert_eq!(player.is_straight(), true);
     }
 }
