@@ -15,13 +15,15 @@ pub enum CardError {
     OutOfBounds,
     #[error("Not a five card poker hand")]
     NotFullHand,
+    #[error("Not a recognized id")]
+    NotCardId,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Suit {
-    Heart,
-    Diamond,
     Club,
+    Diamond,
+    Heart,
     Spade,
 }
 
@@ -111,6 +113,10 @@ impl Card {
     pub fn get_suit_usize(&self) -> usize {
         self.value / 13
     }
+    ///get value from card
+    pub fn get_value(&self) -> usize {
+        self.value
+    }
 }
 
 impl fmt::Display for Card {
@@ -175,11 +181,18 @@ impl Hand {
     }
 
     ///remove a card from hand
-    pub fn discard(&mut self, location: usize) -> Result<Card, CardError> {
-        if location >= self.hand.len() {
-            return Err(CardError::OutOfBounds);
+    pub fn discard(&mut self, id: &str) -> Result<Card, CardError> {
+        let mut id_value: usize = 0;
+        match value_from_id(id) {
+            Ok(value) => id_value = value,
+            Err(e) => return Err(e),
         }
-        Ok(self.hand.remove(location))
+        for (i, card) in self.hand.iter_mut().enumerate() {
+            if card.get_value() == id_value {
+                return Ok(self.hand.remove(i));
+            }
+        }
+        Err(CardError::CardNotFound)
     }
 
     ///return usize value of high card in hand
@@ -196,7 +209,7 @@ impl Hand {
     ///returns number of pairs in a hand by rank.
     /// first two spots in array are 0 and 1 and
     /// won't get filled. filled array is 2 - ace(15);
-    pub fn find_matches(&self) -> Vec<usize> {
+    fn find_matches(&self) -> Vec<usize> {
         let mut matches = vec![0; 15];
         for card in self.hand.iter() {
             matches[card.get_rank_usize()] += 1;
@@ -204,7 +217,7 @@ impl Hand {
         matches
     }
     ///returns true if hand has a strait.
-    pub fn is_straight(&self) -> bool {
+    fn is_straight(&self) -> bool {
         let mut strait_vec: Vec<usize> = Vec::new();
         for card in self.hand.iter() {
             strait_vec.push(card.get_rank_usize());
@@ -220,7 +233,7 @@ impl Hand {
         true
     }
     ///returns true if hand is flush
-    pub fn is_flush(&self) -> bool {
+    fn is_flush(&self) -> bool {
         let base = self.hand[0].get_suit();
         for card in self.hand.iter() {
             if card.get_suit() != base {
@@ -230,14 +243,14 @@ impl Hand {
         true
     }
     ///returns true if hand is strait flush
-    pub fn is_straight_flush(&self) -> bool {
+    fn is_straight_flush(&self) -> bool {
         if self.is_flush() && self.is_straight() {
             return true;
         }
         false
     }
     ///returns true if hand is royal flush
-    pub fn is_royal_flush(&mut self) -> bool {
+    fn is_royal_flush(&mut self) -> bool {
         self.sort_by_suit();
         if self.is_straight_flush() && self.hand[0].get_rank() == Rank::Ten {
             return true;
@@ -248,7 +261,7 @@ impl Hand {
     /// usize in argument. so if num is 3 and hand has
     /// three of a kind, return true. Will not detect two pair.
     /// use is_two_pair for that.
-    pub fn is_match_of_kind(&self, num: usize) -> bool {
+    fn is_match_of_kind(&self, num: usize) -> bool {
         let matches = self.find_matches();
         for cards in matches.iter() {
             if cards == &num {
@@ -258,7 +271,7 @@ impl Hand {
         false
     }
     ///returns true if hand has two pair
-    pub fn is_two_pair(&self) -> bool {
+    fn is_two_pair(&self) -> bool {
         let matches = self.find_matches();
         let mut pair = 0;
         for a_match in matches {
@@ -273,7 +286,7 @@ impl Hand {
     }
 
     ///returns true if hand is full house
-    pub fn is_full_house(&self) -> bool {
+    fn is_full_house(&self) -> bool {
         if self.is_match_of_kind(3) && self.is_match_of_kind(2) {
             return true;
         }
@@ -314,10 +327,71 @@ impl fmt::Display for Hand {
         let mut hand_to_string: String = String::new();
         hand_to_string.push_str(format!("{}\n", self.name).as_str());
         for card in self.hand.iter() {
-            hand_to_string.push_str(format!("{}\n", card).as_str());
+            hand_to_string.push_str(format!("-{}\n", card).as_str());
         }
         formatter.write_fmt(format_args!("{}", hand_to_string))
     }
+}
+
+///takes a two letter str representing the rank:suit of card
+/// and returns card value. So 2c => 0  = two of clubs.
+pub fn value_from_id(id: &str) -> Result<usize, CardError> {
+    let id_val = match id {
+        "2c" => 0,
+        "3c" => 1,
+        "4c" => 2,
+        "5c" => 3,
+        "6c" => 4,
+        "7c" => 5,
+        "8c" => 6,
+        "9c" => 7,
+        "10c" => 8,
+        "jc" => 9,
+        "qc" => 10,
+        "kc" => 11,
+        "ac" => 12,
+        "2d" => 13,
+        "3d" => 14,
+        "4d" => 15,
+        "5d" => 16,
+        "6d" => 17,
+        "7d" => 18,
+        "8d" => 19,
+        "9d" => 20,
+        "10d" => 21,
+        "jd" => 22,
+        "qd" => 23,
+        "kd" => 24,
+        "ad" => 25,
+        "2h" => 26,
+        "3h" => 27,
+        "4h" => 28,
+        "5h" => 29,
+        "6h" => 30,
+        "7h" => 31,
+        "8h" => 32,
+        "9h" => 33,
+        "10h" => 34,
+        "jh" => 35,
+        "qh" => 36,
+        "kh" => 37,
+        "ah" => 38,
+        "2s" => 39,
+        "3s" => 40,
+        "4s" => 41,
+        "5s" => 42,
+        "6s" => 43,
+        "7s" => 44,
+        "8s" => 45,
+        "9s" => 46,
+        "10s" => 47,
+        "js" => 48,
+        "qs" => 49,
+        "ks" => 50,
+        "as" => 51,
+        _ => return Err(CardError::NotCardId),
+    };
+    Ok(id_val)
 }
 
 #[cfg(test)]
