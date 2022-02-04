@@ -71,7 +71,7 @@ pub struct Deck {
 
 pub struct Hand {
     name: String,
-    hand: Vec<Card>,
+    pub hand: Vec<Card>,
 }
 
 impl Card {
@@ -216,6 +216,7 @@ impl Hand {
         }
         matches
     }
+
     ///returns true if hand has a strait.
     fn is_straight(&self) -> bool {
         let mut strait_vec: Vec<usize> = Vec::new();
@@ -242,6 +243,7 @@ impl Hand {
         }
         true
     }
+
     ///returns true if hand is strait flush
     fn is_straight_flush(&self) -> bool {
         if self.is_flush() && self.is_straight() {
@@ -249,6 +251,7 @@ impl Hand {
         }
         false
     }
+
     ///returns true if hand is royal flush
     fn is_royal_flush(&mut self) -> bool {
         self.sort_by_suit();
@@ -257,6 +260,7 @@ impl Hand {
         }
         false
     }
+
     ///returns true if hand has a match equal to
     /// usize in argument. so if num is 3 and hand has
     /// three of a kind, return true. Will not detect two pair.
@@ -270,6 +274,7 @@ impl Hand {
         }
         false
     }
+
     ///returns true if hand has two pair
     fn is_two_pair(&self) -> bool {
         let matches = self.find_matches();
@@ -292,6 +297,7 @@ impl Hand {
         }
         false
     }
+
     ///returns best five card hand
     /// must have only five cards
     pub fn find_poker_hand(&mut self) -> Result<PokerHand, CardError> {
@@ -317,10 +323,10 @@ impl Hand {
         } else if self.is_straight() {
             return Ok(PokerHand::Straight);
         }
-
         Ok(PokerHand::HighCard)
     }
 }
+
 impl fmt::Display for Hand {
     ///printable hand
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
