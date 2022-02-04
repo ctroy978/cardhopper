@@ -1,7 +1,7 @@
 mod games;
 
 use crate::games::stud::*;
-use cardlib::*;
+use cardhopper::*;
 
 use combinations::Combinations;
 
