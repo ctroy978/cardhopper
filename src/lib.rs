@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 use thiserror::Error;
+use combinations::Combinations;
 
 const FULLDECK: usize = 52;
 const DIVIDER: usize = 13; //number for math tricks to assign suit and rank
@@ -17,6 +18,8 @@ pub enum CardError {
     NotFullHand,
     #[error("Not a recognized id")]
     NotCardId,
+    #[error("Too many cards in hand")]
+    TooManyCards,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq)]
@@ -57,6 +60,25 @@ pub enum PokerHand {
     FourKind,
     StraightFlush,
     RoyalFlush,
+}
+
+impl fmt::Display for PokerHand {
+    ///printable pokerhand
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self{
+            PokerHand::HighCard => write!(f, "High Card"),
+            PokerHand::OnePair => write!(f, "One Pair"),
+            PokerHand::TwoPair => write!(f, "Two Pair"),
+            PokerHand::ThreeKind => write!(f, "Three of a Kind"),
+            PokerHand::Straight => write!(f, "Straight"),
+            PokerHand::Flush => write!(f, "Flush"),
+            PokerHand::FullHouse => write!(f, "Full House"),
+            PokerHand::FourKind => write!(f, "Four of a Kind"),
+            PokerHand::StraightFlush => write!(f, "Straight Flush"),
+            PokerHand::RoyalFlush => write!(f, "Royal Flush"),
+            _ => write!(f, "not a poker hand"),
+        }
+    }
 }
 
 ///card can have a value between 0-51.
@@ -324,6 +346,35 @@ impl Hand {
             return Ok(PokerHand::Straight);
         }
         Ok(PokerHand::HighCard)
+    }
+    ///returns best poker hand if more than five
+    /// cards in game. Will regect hands with more than seven cards.
+    pub fn find_best_hand(&self) -> Result<(PokerHand, Hand), CardError>{
+        if self.hand.len() > 7{
+            return Err(CardError::TooManyCards);
+        }
+        //create a vec of the values of all cards in hand
+        let mut vec_values = Vec::new();
+        //push values of all cards into vec for combinations
+        for c in self.hand.iter() {
+            vec_values.push(c.get_value());
+        }
+        let computed: Vec<_> = Combinations::new(vec_values, 5).collect();
+        let mut best = PokerHand::HighCard;
+        let mut best_hand = Hand::new("best_hand");
+        for hand in computed.iter(){
+            best = PokerHand::HighCard;
+            let mut test_hand = Hand::new("best_hand");
+            for c in hand.iter() {
+                test_hand.deal_card(Card::new(*c));
+            }
+            let find_ph = test_hand.find_poker_hand().unwrap();
+            if find_ph > best {
+                best = find_ph;
+                best_hand = test_hand;
+            }
+        }
+        Ok((best, best_hand))
     }
 }
 
